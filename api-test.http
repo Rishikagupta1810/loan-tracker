@@ -1,0 +1,79 @@
+### =========================
+### REGISTER USER
+### =========================
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Rishika",
+  "email": "rishika12@gmail.com",
+  "password": "123456"
+}
+
+### =========================
+### LOGIN USER
+### =========================
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "rishika12@gmail.com",
+  "password": "123456"
+}
+
+### =========================
+### CREATE LOAN
+### =========================
+POST http://localhost:5000/api/loans
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+
+{
+  "amount": 50000,
+  "reason": "Farming",
+  "interest": 5,
+  "duration": 12
+}
+
+### =========================
+### GET ALL LOANS
+### =========================
+GET http://localhost:5000/api/loans
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+
+### =========================
+### UPDATE LOAN
+### =========================
+PUT http://localhost:5000/api/loans/69e6761bc3d47aeed77baaf8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+
+{
+  "amount": 60000
+}
+
+### =========================
+### DELETE LOAN
+### =========================
+DELETE http://localhost:5000/api/loans/69e66c6434023817644bb895
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+### =========================
+### =========================
+POST http://localhost:5000/api/expenses
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+
+{
+  "loan": "69e67480c3d47aeed77baaf3",
+  "amount": 2000,
+  "description": "Bought seeds",
+  "image": "",
+  "location": "Gwalior"
+}
+
+### GET ALL EXPENSES
+GET http://localhost:5000/api/expenses
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA
+
+GET http://localhost:5000/api/expenses/loan/69e67480c3d47aeed77baaf3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY3NTkxYzNkNDdhZWVkNzdiYWFmNyIsImlhdCI6MTc3NjcxMTA2OCwiZXhwIjoxNzc2Nzk3NDY4fQ.MORRNX5KrAST0EZa8NSUTDKzvtGzquoYRKJ83jkzMmA

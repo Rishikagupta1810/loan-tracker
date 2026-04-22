@@ -1,0 +1,48 @@
+### REGISTER USER
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Rishika",
+  "email": "rishika123@gmail.com",
+  "password": "123456"
+}
+
+### LOGIN USER
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "rishika123@gmail.com",
+  "password": "123456"
+}
+
+### CREATE LOAN
+POST http://localhost:5000/api/loans
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTM1Y2QyYTFhY2QwZmE2OWI2MGIxYSIsImlhdCI6MTc3NjU0MTM5MCwiZXhwIjoxNzc2NjI3NzkwfQ.K7LR4DoBM-8OGe9badm66JaSlHmM1KzWnp7frr9kWpI
+
+{
+  "amount": 5000,
+  "interest": 5,
+  "duration": 12
+}
+
+### GET ALL LOANS
+GET http://localhost:5000/api/loans
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTM1Y2QyYTFhY2QwZmE2OWI2MGIxYSIsImlhdCI6MTc3NjU0MTM5MCwiZXhwIjoxNzc2NjI3NzkwfQ.K7LR4DoBM-8OGe9badm66JaSlHmM1KzWnp7frr9kWpI
+
+### DELETE LOAN
+DELETE http://localhost:5000/api/loans/69e3ef8509a65501518ff031
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTM1Y2QyYTFhY2QwZmE2OWI2MGIxYSIsImlhdCI6MTc3NjUwODEyMywiZXhwIjoxNzc2NTk0NTIzfQ.W9LafUk04uFN9loMKfS4w3U8h0fRlUUek-Ymo2waiPk
+
+### UPDATE LOAN ✅ (FIXED)
+PUT http://localhost:5000/api/loans/69e3f131666d115805f82729
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTM1Y2QyYTFhY2QwZmE2OWI2MGIxYSIsImlhdCI6MTc3NjUwODEyMywiZXhwIjoxNzc2NTk0NTIzfQ.W9LafUk04uFN9loMKfS4w3U8h0fRlUUek-Ymo2waiPk
+
+{
+  "amount": 9000,
+  "interest": 8,
+  "duration": 10
+}
