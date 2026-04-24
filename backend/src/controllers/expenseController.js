@@ -12,7 +12,8 @@ export const addExpense = async (req, res) => {
       return res.status(404).json({ message: "Loan not found" });
     }
 
-    const image = req.file ? `/uploads/${req.file.filename}` : "";
+    // req.file.path gives the Cloudinary URL directly
+    const image = req.file ? req.file.path : "";
 
     const expense = await Expense.create({
       user: req.user._id,
@@ -43,7 +44,6 @@ export const getExpenses = async (req, res) => {
       "loan",
       "amount reason status"
     );
-
     res.json(expenses);
   } catch (error) {
     console.error("GET EXPENSES ERROR:", error.message);
@@ -58,7 +58,6 @@ export const getExpensesByLoan = async (req, res) => {
       user: req.user._id,
       loan: req.params.loanId,
     }).populate("loan", "amount reason status");
-
     res.json(expenses);
   } catch (error) {
     console.error("GET EXPENSES BY LOAN ERROR:", error.message);
@@ -70,13 +69,10 @@ export const getExpensesByLoan = async (req, res) => {
 export const deleteExpense = async (req, res) => {
   try {
     const expense = await Expense.findById(req.params.id);
-
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
-
     await expense.deleteOne();
-
     res.json({ message: "Expense deleted successfully" });
   } catch (error) {
     console.error("DELETE EXPENSE ERROR:", error.message);
@@ -88,20 +84,13 @@ export const deleteExpense = async (req, res) => {
 export const updateExpenseStatus = async (req, res) => {
   try {
     const { status } = req.body;
-
     const expense = await Expense.findById(req.params.id);
-
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
-
     expense.status = status;
     await expense.save();
-
-    res.json({
-      message: "Status updated",
-      expense
-    });
+    res.json({ message: "Status updated", expense });
   } catch (error) {
     console.error("UPDATE STATUS ERROR:", error.message);
     res.status(500).json({ message: "Server error" });
@@ -114,11 +103,9 @@ export const getAllExpensesAdmin = async (req, res) => {
     const expenses = await Expense.find()
       .populate("user", "name email")
       .populate("loan", "amount reason");
-
     res.json(expenses);
   } catch (error) {
     console.error("ADMIN GET EXPENSES ERROR:", error.message);
     res.status(500).json({ message: "Server error" });
   }
-};
-
+};  
