@@ -44,6 +44,14 @@ function Dashboard() {
   };
 
   const addLoan = async () => {
+    if (!form.amount || Number(form.amount) <= 0) {
+      toast.error("Please enter a valid amount greater than 0");
+      return;
+    }
+    if (!form.reason || form.reason.trim() === "") {
+      toast.error("Please enter a reason for the loan");
+      return;
+    }
     try {
       await API.post("/loans", {
         amount: Number(form.amount),
@@ -85,6 +93,18 @@ function Dashboard() {
   };
 
   const addExpense = async () => {
+    if (!expenseForm.loan) {
+      toast.error("Please select a loan");
+      return;
+    }
+    if (!expenseForm.amount || Number(expenseForm.amount) <= 0) {
+      toast.error("Please enter a valid amount greater than 0");
+      return;
+    }
+    if (!expenseForm.description || expenseForm.description.trim() === "") {
+      toast.error("Please enter a description");
+      return;
+    }
     try {
       const formData = new FormData();
 
