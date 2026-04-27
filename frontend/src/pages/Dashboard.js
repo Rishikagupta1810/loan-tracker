@@ -436,7 +436,7 @@ function Dashboard() {
 
                 {exp.image && (
                   <img
-                    src={`http://localhost:5000${exp.image}`}
+                   src={exp.image}
                     alt="proof"
                     style={styles.image}
                   />
