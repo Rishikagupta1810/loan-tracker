@@ -6,19 +6,16 @@ function Dashboard() {
   const [loans, setLoans] = useState([]);
   const [expenses, setExpenses] = useState([]);
 
-  const [form, setForm] = useState({
-    amount: "",
-    reason: ""
-  });
+  const [form, setForm] = useState({ amount: "", reason: "" });
+  const [formErrors, setFormErrors] = useState({});
 
   const [expenseForm, setExpenseForm] = useState({
-    loan: "",
-    amount: "",
-    description: "",
-    image: null,
-    latitude: "",
-    longitude: ""
+    loan: "", amount: "", description: "", image: null, latitude: "", longitude: ""
   });
+  const [expenseErrors, setExpenseErrors] = useState({});
+
+  // Edit Modal state
+  const [editModal, setEditModal] = useState({ open: false, loanId: null, amount: "", error: "" });
 
   useEffect(() => {
     fetchLoans();
@@ -44,14 +41,11 @@ function Dashboard() {
   };
 
   const addLoan = async () => {
-    if (!form.amount || Number(form.amount) <= 0) {
-      toast.error("Please enter a valid amount greater than 0");
-      return;
-    }
-    if (!form.reason || form.reason.trim() === "") {
-      toast.error("Please enter a reason for the loan");
-      return;
-    }
+    const errors = {};
+    if (!form.amount || Number(form.amount) <= 0) errors.amount = "Enter a valid amount greater than 0";
+    if (!form.reason || form.reason.trim() === "") errors.reason = "Reason cannot be empty";
+    if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
+    setFormErrors({});
     try {
       await API.post("/loans", {
         amount: Number(form.amount),
@@ -59,7 +53,6 @@ function Dashboard() {
         interest: 5,
         duration: 12
       });
-
       setForm({ amount: "", reason: "" });
       fetchLoans();
       toast.success("Loan added successfully");
@@ -79,13 +72,19 @@ function Dashboard() {
     }
   };
 
-  const updateLoan = async (id) => {
-    const newAmount = prompt("Enter new amount:");
-    if (!newAmount) return;
+  const updateLoan = (id, currentAmount) => {
+    setEditModal({ open: true, loanId: id, amount: currentAmount, error: "" });
+  };
 
+  const handleEditSubmit = async () => {
+    if (!editModal.amount || Number(editModal.amount) <= 0) {
+      setEditModal(prev => ({ ...prev, error: "Enter a valid amount greater than 0" }));
+      return;
+    }
     try {
-      await API.put(`/loans/${id}`, { amount: Number(newAmount) });
+      await API.put(`/loans/${editModal.loanId}`, { amount: Number(editModal.amount) });
       fetchLoans();
+      setEditModal({ open: false, loanId: null, amount: "", error: "" });
       toast.success("Loan updated successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Update failed");
@@ -93,18 +92,12 @@ function Dashboard() {
   };
 
   const addExpense = async () => {
-    if (!expenseForm.loan) {
-      toast.error("Please select a loan");
-      return;
-    }
-    if (!expenseForm.amount || Number(expenseForm.amount) <= 0) {
-      toast.error("Please enter a valid amount greater than 0");
-      return;
-    }
-    if (!expenseForm.description || expenseForm.description.trim() === "") {
-      toast.error("Please enter a description");
-      return;
-    }
+    const errors = {};
+    if (!expenseForm.loan) errors.loan = "Please select a loan";
+    if (!expenseForm.amount || Number(expenseForm.amount) <= 0) errors.amount = "Enter a valid amount greater than 0";
+    if (!expenseForm.description || expenseForm.description.trim() === "") errors.description = "Description cannot be empty";
+    if (Object.keys(errors).length > 0) { setExpenseErrors(errors); return; }
+    setExpenseErrors({});
     try {
       const formData = new FormData();
 
@@ -235,18 +228,20 @@ function Dashboard() {
           </div>
           <label style={styles.label}>Amount (₹)</label>
           <input
-            style={styles.input}
+            style={{ ...styles.input, ...(formErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 50000"
             value={form.amount}
-            onChange={(e) => setForm({ ...form, amount: e.target.value })}
+            onChange={(e) => { setForm({ ...form, amount: e.target.value }); setFormErrors(p => ({ ...p, amount: "" })); }}
           />
+          {formErrors.amount && <p style={styles.errorMsg}>⚠ {formErrors.amount}</p>}
           <label style={styles.label}>Reason</label>
           <input
-            style={styles.input}
+            style={{ ...styles.input, ...(formErrors.reason ? styles.inputError : {}) }}
             placeholder="e.g. Home renovation"
             value={form.reason}
-            onChange={(e) => setForm({ ...form, reason: e.target.value })}
+            onChange={(e) => { setForm({ ...form, reason: e.target.value }); setFormErrors(p => ({ ...p, reason: "" })); }}
           />
+          {formErrors.reason && <p style={styles.errorMsg}>⚠ {formErrors.reason}</p>}
           <button style={styles.button} onClick={addLoan}>
             + Add Loan
           </button>
@@ -261,11 +256,9 @@ function Dashboard() {
 
           <label style={styles.label}>Select Loan</label>
           <select
-            style={styles.input}
+            style={{ ...styles.input, ...(expenseErrors.loan ? styles.inputError : {}) }}
             value={expenseForm.loan}
-            onChange={(e) =>
-              setExpenseForm({ ...expenseForm, loan: e.target.value })
-            }
+            onChange={(e) => { setExpenseForm({ ...expenseForm, loan: e.target.value }); setExpenseErrors(p => ({ ...p, loan: "" })); }}
           >
             <option value="">— Choose a loan —</option>
             {loans.map((loan) => (
@@ -274,26 +267,25 @@ function Dashboard() {
               </option>
             ))}
           </select>
+          {expenseErrors.loan && <p style={styles.errorMsg}>⚠ {expenseErrors.loan}</p>}
 
           <label style={styles.label}>Amount (₹)</label>
           <input
-            style={styles.input}
+            style={{ ...styles.input, ...(expenseErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 5000"
             value={expenseForm.amount}
-            onChange={(e) =>
-              setExpenseForm({ ...expenseForm, amount: e.target.value })
-            }
+            onChange={(e) => { setExpenseForm({ ...expenseForm, amount: e.target.value }); setExpenseErrors(p => ({ ...p, amount: "" })); }}
           />
+          {expenseErrors.amount && <p style={styles.errorMsg}>⚠ {expenseErrors.amount}</p>}
 
           <label style={styles.label}>Description</label>
           <input
-            style={styles.input}
+            style={{ ...styles.input, ...(expenseErrors.description ? styles.inputError : {}) }}
             placeholder="What was this expense for?"
             value={expenseForm.description}
-            onChange={(e) =>
-              setExpenseForm({ ...expenseForm, description: e.target.value })
-            }
+            onChange={(e) => { setExpenseForm({ ...expenseForm, description: e.target.value }); setExpenseErrors(p => ({ ...p, description: "" })); }}
           />
+          {expenseErrors.description && <p style={styles.errorMsg}>⚠ {expenseErrors.description}</p>}
 
           <label style={styles.label}>Proof Image</label>
           <input
@@ -377,7 +369,7 @@ function Dashboard() {
               <div style={styles.cardRight}>
                 <p style={styles.cardAmount}>₹{Number(loan.amount).toLocaleString("en-IN")}</p>
                 <div style={styles.cardActions}>
-                  <button style={styles.editBtn} onClick={() => updateLoan(loan._id)}>Edit</button>
+                  <button style={styles.editBtn} onClick={() => updateLoan(loan._id, loan.amount)}>Edit</button>
                   <button style={styles.deleteBtn} onClick={() => deleteLoan(loan._id)}>Delete</button>
                 </div>
               </div>
@@ -455,6 +447,32 @@ function Dashboard() {
       </div>
 
 
+
+      {/* Edit Loan Modal */}
+      {editModal.open && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalBox}>
+            <h3 style={styles.modalTitle}>✏️ Edit Loan Amount</h3>
+            <p style={styles.modalSub}>Enter the new amount for this loan</p>
+            <label style={styles.label}>New Amount (₹)</label>
+            <input
+              style={{ ...styles.input, ...(editModal.error ? styles.inputError : {}) }}
+              placeholder="e.g. 50000"
+              value={editModal.amount}
+              onChange={(e) => setEditModal(p => ({ ...p, amount: e.target.value, error: "" }))}
+              autoFocus
+            />
+            {editModal.error && <p style={styles.errorMsg}>⚠ {editModal.error}</p>}
+            <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+              <button style={styles.button} onClick={handleEditSubmit}>Save Changes</button>
+              <button
+                style={{ ...styles.button, background: "#f1f5f9", color: "#374151", boxShadow: "none", border: "1px solid #e2e8f0" }}
+                onClick={() => setEditModal({ open: false, loanId: null, amount: "", error: "" })}
+              >Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
@@ -864,6 +882,59 @@ const styles = {
     fontFamily: "inherit",
     letterSpacing: "0.01em",
     boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+  },
+
+  inputError: {
+    border: "1.5px solid #f87171",
+    background: "#fff5f5",
+  },
+
+  errorMsg: {
+    color: "#dc2626",
+    fontSize: "12px",
+    fontWeight: "500",
+    margin: "-8px 0 10px 2px",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    background: "#fff5f5",
+    border: "1px solid #fecaca",
+    borderRadius: "6px",
+    padding: "5px 10px",
+  },
+
+  modalOverlay: {
+    position: "fixed",
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: "rgba(15,23,42,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+    backdropFilter: "blur(2px)",
+  },
+
+  modalBox: {
+    background: "white",
+    borderRadius: "16px",
+    padding: "28px 32px",
+    width: "100%",
+    maxWidth: "400px",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+    border: "1px solid #e2e8f0",
+  },
+
+  modalTitle: {
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "#0f172a",
+    margin: "0 0 4px",
+  },
+
+  modalSub: {
+    fontSize: "13px",
+    color: "#64748b",
+    margin: "0 0 18px",
   },
 };
 
