@@ -8,15 +8,10 @@ export const registerUser = async (req, res) => {
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Email already registered. Please login instead." });
     }
 
-    // Don't hash manually — the User model pre("save") hook handles it
-    const user = await User.create({
-      name,
-      email,
-      password
-    });
+    const user = await User.create({ name, email, password });
 
     res.status(201).json({
       message: "User created successfully",
@@ -24,7 +19,11 @@ export const registerUser = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error.code === 11000) {
+      res.status(400).json({ message: "Email already registered. Please login instead." });
+    } else {
+      res.status(500).json({ message: "Something went wrong. Please try again." });
+    }
   }
 };
 
@@ -36,14 +35,13 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "No account found with this email. Please register first." });
     }
 
-    // Use the model's matchPassword method
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Incorrect password. Please try again." });
     }
 
     const token = jwt.sign(
@@ -58,6 +56,6 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Something went wrong. Please try again." });
   }
 };

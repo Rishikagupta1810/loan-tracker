@@ -164,9 +164,16 @@ function Dashboard() {
         }));
         toast.success("Location fetched successfully");
       },
-      () => {
-        toast.error("Unable to fetch location");
-      }
+      (err) => {
+        if (err.code === 1) {
+          toast.error("Location permission denied. Please allow location access in your browser settings.");
+        } else if (err.code === 2) {
+          toast.error("Location unavailable. Please check your GPS or try again.");
+        } else {
+          toast.error("Unable to fetch location. Please try again.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
