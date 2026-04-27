@@ -1,6 +1,7 @@
 import { useState } from "react";
 import API from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [form, setForm] = useState({
@@ -16,10 +17,10 @@ function Login() {
 
     localStorage.setItem("token", res.data.token);
 
-    alert("Login Success");
+    toast.success("Login Success");
     navigate("/dashboard");
   } catch (error) {
-    alert(error.response?.data?.message || "Login failed");
+    toast.error(error.response?.data?.message || "Login failed");
   }
 };
 

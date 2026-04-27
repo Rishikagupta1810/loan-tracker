@@ -1,6 +1,7 @@
 import { useState } from "react";
 import API from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
   const [form, setForm] = useState({
@@ -14,11 +15,11 @@ function Register() {
  const handleSubmit = async () => {
   try {
     await API.post("/auth/register", form);
-    alert("Registered Successfully");
+    toast.success("Registered Successfully");
     navigate("/");
   } catch (error) {
     console.log("REGISTER ERROR:", error.response?.data || error.message);
-    alert(error.response?.data?.message || error.message || "Register failed");
+    toast.error(error.response?.data?.message || error.message || "Register failed");
   }
 };
 

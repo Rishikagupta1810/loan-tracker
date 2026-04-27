@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import { toast } from "react-toastify";
 
 function Dashboard() {
   const [loans, setLoans] = useState([]);
@@ -53,9 +54,9 @@ function Dashboard() {
 
       setForm({ amount: "", reason: "" });
       fetchLoans();
-      alert("Loan added successfully");
+      toast.success("Loan added successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Add loan failed");
+      toast.error(error.response?.data?.message || "Add loan failed");
     }
   };
 
@@ -64,9 +65,9 @@ function Dashboard() {
       await API.delete(`/loans/${id}`);
       fetchLoans();
       fetchExpenses();
-      alert("Loan deleted successfully");
+      toast.success("Loan deleted successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Delete failed");
+      toast.error(error.response?.data?.message || "Delete failed");
     }
   };
 
@@ -77,9 +78,9 @@ function Dashboard() {
     try {
       await API.put(`/loans/${id}`, { amount: Number(newAmount) });
       fetchLoans();
-      alert("Loan updated successfully");
+      toast.success("Loan updated successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Update failed");
+      toast.error(error.response?.data?.message || "Update failed");
     }
   };
 
@@ -109,9 +110,9 @@ function Dashboard() {
       });
 
       fetchExpenses();
-      alert("Expense added successfully");
+      toast.success("Expense added successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Error adding expense");
+      toast.error(error.response?.data?.message || "Error adding expense");
     }
   };
 
@@ -119,9 +120,9 @@ function Dashboard() {
     try {
       await API.delete(`/expenses/${id}`);
       fetchExpenses();
-      alert("Expense deleted successfully");
+      toast.success("Expense deleted successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Delete expense failed");
+      toast.error(error.response?.data?.message || "Delete expense failed");
     }
   };
 
@@ -129,15 +130,15 @@ function Dashboard() {
     try {
       await API.put(`/expenses/${id}/status`, { status });
       fetchExpenses();
-      alert("Status updated successfully");
+      toast.success("Status updated successfully");
     } catch (error) {
-      alert(error.response?.data?.message || "Error updating status");
+      toast.error(error.response?.data?.message || "Error updating status");
     }
   };
 
   const getLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported");
+      toast.error("Geolocation is not supported");
       return;
     }
 
@@ -148,10 +149,10 @@ function Dashboard() {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         }));
-        alert("Location fetched successfully");
+        toast.success("Location fetched successfully");
       },
       () => {
-        alert("Unable to fetch location");
+        toast.error("Unable to fetch location");
       }
     );
   };
@@ -416,7 +417,7 @@ function Dashboard() {
 
                 {exp.image && (
                   <img
-                   src={exp.image}
+                    src={`http://localhost:5000${exp.image}`}
                     alt="proof"
                     style={styles.image}
                   />
