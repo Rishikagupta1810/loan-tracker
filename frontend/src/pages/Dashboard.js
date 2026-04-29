@@ -2,7 +2,19 @@ import { useEffect, useState } from "react";
 import API from "../api/axios";
 import { toast } from "react-toastify";
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return width;
+}
+
 function Dashboard() {
+  const width = useWindowWidth();
+  const isMobile = width < 768;
   const [loans, setLoans] = useState([]);
   const [expenses, setExpenses] = useState([]);
 
@@ -182,19 +194,19 @@ function Dashboard() {
   const remaining = totalLoan - totalExpense;
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, padding: isMobile ? "12px" : "24px" }}>
 
       {/* Header */}
-      <div style={styles.header}>
+      <div style={{ ...styles.header, flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? "12px" : "0" }}>
         <div style={styles.headerLeft}>
           <div style={styles.logoMark}>₹</div>
           <div>
-            <h1 style={styles.title}>Loan Utilization Dashboard</h1>
+            <h1 style={{ ...styles.title, fontSize: isMobile ? "16px" : "20px" }}>Loan Utilization Dashboard</h1>
             <p style={styles.headerSub}>Track and manage your loan spending</p>
           </div>
         </div>
         <button
-          style={styles.logoutBtn}
+          style={{ ...styles.logoutBtn, alignSelf: isMobile ? "flex-end" : "auto" }}
           onClick={() => {
             localStorage.removeItem("token");
             window.location.href = "/";
@@ -205,7 +217,7 @@ function Dashboard() {
       </div>
 
       {/* Summary Cards */}
-      <div style={styles.summaryBox}>
+      <div style={{ ...styles.summaryBox, flexDirection: isMobile ? "column" : "row" }}>
         <div style={{ ...styles.summaryCard, ...styles.summaryCardBlue }}>
           <p style={styles.summaryLabel}>Total Loan</p>
           <p style={styles.summaryValue}>₹{totalLoan.toLocaleString("en-IN")}</p>
@@ -225,7 +237,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <div style={styles.grid}>
+      <div style={{ ...styles.grid, gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr" }}>
 
         {/* Add Loan */}
         <div style={styles.section}>
@@ -324,7 +336,7 @@ function Dashboard() {
             )}
           </div>
 
-          <div style={styles.coordRow}>
+          <div style={{ ...styles.coordRow, flexDirection: isMobile ? "column" : "row" }}>
             <div style={{ flex: 1 }}>
               <label style={styles.label}>Latitude</label>
               <input
@@ -365,7 +377,7 @@ function Dashboard() {
           </div>
         ) : (
           loans.map((loan) => (
-            <div key={loan._id} style={styles.card}>
+            <div key={loan._id} style={{ ...styles.card, flexDirection: isMobile ? "column" : "row" }}>
               <div style={styles.cardLeft}>
                 <div style={styles.cardAvatar}>₹</div>
                 <div>
@@ -399,7 +411,7 @@ function Dashboard() {
           </div>
         ) : (
           expenses.map((exp) => (
-            <div key={exp._id} style={styles.card}>
+            <div key={exp._id} style={{ ...styles.card, flexDirection: isMobile ? "column" : "row" }}>
               <div style={styles.cardLeft}>
                 <div style={{ ...styles.cardAvatar, background: "#fef3c7", color: "#92400e" }}>🧾</div>
                 <div>
@@ -436,7 +448,7 @@ function Dashboard() {
 
                 {exp.image && (
                   <img
-                   src={exp.image}
+                    src={`http://localhost:5000${exp.image}`}
                     alt="proof"
                     style={styles.image}
                   />
