@@ -54,7 +54,10 @@ function Dashboard() {
 
   const addLoan = async () => {
     const errors = {};
-    if (!form.amount || Number(form.amount) <= 0) errors.amount = "Enter a valid amount greater than 0";
+    const amt = form.amount.toString().trim();
+    if (!amt || isNaN(Number(amt)) || Number(amt) <= 0) {
+      errors.amount = "Enter a valid amount greater than 0";
+    }
     if (!form.reason || form.reason.trim() === "") errors.reason = "Reason cannot be empty";
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
     setFormErrors({});
@@ -89,7 +92,8 @@ function Dashboard() {
   };
 
   const handleEditSubmit = async () => {
-    if (!editModal.amount || Number(editModal.amount) <= 0) {
+    const amt = editModal.amount.toString().trim();
+    if (!amt || isNaN(Number(amt)) || Number(amt) <= 0) {
       setEditModal(prev => ({ ...prev, error: "Enter a valid amount greater than 0" }));
       return;
     }
@@ -106,7 +110,8 @@ function Dashboard() {
   const addExpense = async () => {
     const errors = {};
     if (!expenseForm.loan) errors.loan = "Please select a loan";
-    if (!expenseForm.amount || Number(expenseForm.amount) <= 0) errors.amount = "Enter a valid amount greater than 0";
+    const amt = expenseForm.amount.toString().trim();
+    if (!amt || isNaN(Number(amt)) || Number(amt) <= 0) errors.amount = "Enter a valid amount greater than 0";
     if (!expenseForm.description || expenseForm.description.trim() === "") errors.description = "Description cannot be empty";
     if (Object.keys(errors).length > 0) { setExpenseErrors(errors); return; }
     setExpenseErrors({});
@@ -252,6 +257,7 @@ function Dashboard() {
             style={{ ...styles.input, ...(formErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 50000"
             value={form.amount}
+            onKeyDown={(e) => ["e","E","+","-","."].includes(e.key) && e.preventDefault()}
             onChange={(e) => { setForm({ ...form, amount: e.target.value }); setFormErrors(p => ({ ...p, amount: "" })); }}
           />
           {formErrors.amount && <p style={styles.errorMsg}>⚠ {formErrors.amount}</p>}
@@ -297,6 +303,7 @@ function Dashboard() {
             style={{ ...styles.input, ...(expenseErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 5000"
             value={expenseForm.amount}
+            onKeyDown={(e) => ["e","E","+","-","."].includes(e.key) && e.preventDefault()}
             onChange={(e) => { setExpenseForm({ ...expenseForm, amount: e.target.value }); setExpenseErrors(p => ({ ...p, amount: "" })); }}
           />
           {expenseErrors.amount && <p style={styles.errorMsg}>⚠ {expenseErrors.amount}</p>}
