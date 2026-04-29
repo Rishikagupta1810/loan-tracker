@@ -247,6 +247,8 @@ function Dashboard() {
           </div>
           <label style={styles.label}>Amount (₹)</label>
           <input
+            type="number"
+            min="1"
             style={{ ...styles.input, ...(formErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 50000"
             value={form.amount}
@@ -290,6 +292,8 @@ function Dashboard() {
 
           <label style={styles.label}>Amount (₹)</label>
           <input
+            type="number"
+            min="1"
             style={{ ...styles.input, ...(expenseErrors.amount ? styles.inputError : {}) }}
             placeholder="e.g. 5000"
             value={expenseForm.amount}
@@ -475,6 +479,8 @@ function Dashboard() {
             <p style={styles.modalSub}>Enter the new amount for this loan</p>
             <label style={styles.label}>New Amount (₹)</label>
             <input
+              type="number"
+              min="1"
               style={{ ...styles.input, ...(editModal.error ? styles.inputError : {}) }}
               placeholder="e.g. 50000"
               value={editModal.amount}
